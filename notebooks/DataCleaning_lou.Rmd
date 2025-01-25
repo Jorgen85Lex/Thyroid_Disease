@@ -1,0 +1,97 @@
+---
+title: "Thyroid Data Cleaning"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+```{r}
+library(tidyverse)
+library(ggplot2)
+```
+
+```{r}
+thyroid_df <- read_csv("../Documents/NSS_Projects/Thyroid_Disease/data/thyroidDF.csv")
+thyroid_df
+```
+```{r}
+thyroid_df$target[thyroid_df$target == "-"] <- NA
+
+thyroid_df <- subset(thyroid_df, select = -c(psych, referral_source, query_hypothyroid, query_hyperthyroid, TSH_measured , T3_measured , TT4_measured , T4U_measured, FTI_measured , TBG_measured, query_on_thyroxine))
+
+thyroid_df <- thyroid_df %>% filter(!is.na(sex))
+
+thyroid_df
+```
+
+
+```{r}
+map_diagnosis_condition <- function(target) {
+  if (is.na(target)) {
+    return(list(Diagnosis = NA, Condition_Type = NA))
+  }
+  
+  # For multiple diagnosis 
+  if (nchar(target) > 1) {
+    first_letter <- substr(target, 1, 1)
+    second_letter <- substr(target, 2, 2)
+    
+    diagnosis1 <- diagnosis_map[first_letter]
+    diagnosis2 <- diagnosis_map[second_letter]
+    
+    condition1 <- condition_type_map[first_letter]
+    condition2 <- condition_type_map[second_letter]
+    
+    #writing out multiple diagnosis/conditions
+    diagnosis <- paste("consistent with", diagnosis1, "(", condition1, "), but more likely", diagnosis2, "(", condition2, ")")
+    condition_type <- paste(condition1, "and", condition2)
+    
+    return(list(Diagnosis = diagnosis, Condition_Type = condition_type))
+  } else {
+    
+    # For single diagosis & conditions
+    diagnosis <- diagnosis_map[target]
+    condition_type <- condition_type_map[target]
+    return(list(Diagnosis = paste(diagnosis), Condition_Type = condition_type))
+  }
+}
+```
+
+```{r}
+thyroid_df <- thyroid_df %>%
+  rowwise() %>%
+  mutate(
+    Diagnosis = map_diagnosis_condition(target)$Diagnosis,
+    Condition_Type = map_diagnosis_condition(target)$Condition_Type
+  ) %>%
+  ungroup()
+
+thyroid_df
+```
+```{r}
+thyroid_df[] <- lapply(thyroid_df, function(x) if(is.numeric(x)) round(x, 2) else x)
+thyroid_df
+```
+```{r}
+duplicated_patient_ids <- unique(thyroid_df$patient_id[duplicated(thyroid_df$patient_id)])
+print(duplicated_patient_ids)
+```
+
+```{r}
+
+```
+
+
+
+
+
+
+
+
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
