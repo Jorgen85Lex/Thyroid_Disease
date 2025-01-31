@@ -12,7 +12,7 @@ library(ggplot2)
 ```
 
 ```{r}
-thyroid_df <- read_csv("../Documents/NSS_Projects/Thyroid_Disease/data/thyroidDF.csv")
+thyroid_df <- read_csv("../data/thyroidDF.csv")
 thyroid_df
 ```
 ```{r}
@@ -20,7 +20,7 @@ thyroid_df$target[thyroid_df$target == "-"] <- NA
 
 thyroid_df <- subset(thyroid_df, select = -c(psych, referral_source, query_hypothyroid, query_hyperthyroid, TSH_measured , T3_measured , TT4_measured , T4U_measured, FTI_measured , TBG_measured, query_on_thyroxine))
 
-thyroid_df <- thyroid_df %>% filter(!is.na(sex))
+thyroid_df <- thyroid_df |>  filter(!is.na(sex))
 
 thyroid_df
 ```
@@ -50,7 +50,7 @@ map_diagnosis_condition <- function(target) {
     return(list(Diagnosis = diagnosis, Condition_Type = condition_type))
   } else {
     
-    # For single diagosis & conditions
+    # For single diganosis & conditions
     diagnosis <- diagnosis_map[target]
     condition_type <- condition_type_map[target]
     return(list(Diagnosis = paste(diagnosis), Condition_Type = condition_type))
@@ -59,12 +59,12 @@ map_diagnosis_condition <- function(target) {
 ```
 
 ```{r}
-thyroid_df <- thyroid_df %>%
-  rowwise() %>%
+thyroid_df <- thyroid_df |> 
+  rowwise() |> 
   mutate(
     Diagnosis = map_diagnosis_condition(target)$Diagnosis,
     Condition_Type = map_diagnosis_condition(target)$Condition_Type
-  ) %>%
+  ) |> 
   ungroup()
 
 thyroid_df
@@ -91,9 +91,218 @@ table(thyroid_df$Condition_Type)
 ```{r}
 table(thyroid_df$Diagnosis)
 ```
+```{r}
+thyroid_df |> 
+  filter(Condition_Type == "binding protein")
+```
+
+```{r}
+thyroid_df <- thyroid_df |> 
+  filter(age <= 97)
+```
+```{r}
+thyroid_df <- thyroid_df |> 
+  select(age, sex, pregnant, TSH, T3, TT4, FTI, Diagnosis, Condition_Type)
+thyroid_df
+```
 
 
 
+```{r}
+thyroid_df <- thyroid_df |> 
+  mutate(TSH_status = case_when(
+    is.na(TSH) ~ "No labs available",
+    age >= 1 & age <= 6 & TSH >= 0.7 & TSH <= 5.97 ~ "Normal TSH",
+    age >= 1 & age <= 6 & (TSH < 0.7) ~ "Low TSH",
+    age >= 1 & age <= 6 & (TSH > 5.97) ~ "High TSH",
+    
+    age >= 7 & age <= 11 & TSH >= 0.6 & TSH <= 4.84 ~ "Normal TSH",
+    age >= 7 & age <= 11 & (TSH < 0.6) ~ "Low TSH",
+    age >= 7 & age <= 11 & (TSH > 4.84) ~ "High TSH",
+    
+    age >= 12 & age <= 20 & TSH >= 0.51 & TSH <= 4.3 ~ "Normal TSH",
+    age >= 12 & age <= 20 & (TSH < 0.51) ~ "Low TSH",
+    age >= 12 & age <= 20 & (TSH > 4.3) ~ "High TSH",
+    
+    age >= 21 & age <= 99 & TSH >= 0.27 & TSH <= 4.2 ~ "Normal TSH",
+    age >= 21 & age <= 99 & (TSH < 0.27) ~ "Low TSH",
+    age >= 21 & age <= 99 & (TSH > 4.2) ~ "High TSH",
+    
+    TRUE ~ "Invalid Age Range" 
+  ))
+
+thyroid_df
+
+```
+
+```{r}
+thyroid_df <- thyroid_df |> 
+  mutate(T3_status = case_when(
+    is.na(T3) ~ "No labs available",
+    age >= 1 & age <= 5 & T3 >= 106 & T3 <= 203 ~ "Normal T3",
+    age >= 1 & age <= 5 & (T3 < 106) ~ "Low T3",
+    age >= 1 & age <= 5 & (T3 > 206) ~ "High T3",
+    
+    age >= 6 & age <= 10 & T3 >= 104 & T3 <= 183 ~ "Normal T3",
+    age >= 6 & age <= 10 & (T3 < 104) ~ "Low T3",
+    age >= 6 & age <= 10 & (T3 > 183) ~ "High T3",
+    
+    age >= 15 & age <= 17 & T3 >= 68 & T3 <= 186 ~ "Normal T3",
+    age >= 15 & age <= 17 & (T3 < 68) ~ "Low T3",
+    age >= 15 & age <= 17 & (T3 > 186) ~ "High T3",
+    
+    age >= 18 & age <= 99 & T3 >= 79 & T3 <= 165 ~ "Normal T3",
+    age >= 18 & age <= 99 & (T3 < 79) ~ "Low T3",
+    age >= 18 & age <= 99 & (T3 > 165) ~ "High T3",
+    
+    TRUE ~ "Invalid Age Range" 
+  ))
+
+thyroid_df
+```
+
+```{r}
+thyroid_df <- thyroid_df |> 
+  mutate(TT4_status = case_when(
+    is.na(TT4) ~ "No labs available",
+    
+    age <= 5 & TT4 >= 0.8 & TT4 <= 2.8 ~ "Normal TT4",
+    age <= 5 & (TT4 < 0.8) ~ "Low TT4",
+    age <= 5 & (TT4 > 2.8) ~ "High TT4",
+    
+    age >= 6 & age <= 15 & TT4 >= 0.8 & TT4 <= 2.1 ~ "Normal TT4",
+    age >= 6 & age <= 15 & (TT4 < 0.8) ~ "Low TT4",
+    age >= 6 & age <= 15 & (TT4 > 2.1) ~ "High TT4",
+    
+    age >= 16 & age <= 17 & sex == "M" & TT4 >= 0.8 & TT4 <= 2.8 ~ "Normal TT4",
+    age >= 16 & age <= 17 & sex == "M" & (TT4 < 0.8) ~ "Low TT4",
+    age >= 16 & age <= 17 & sex == "M" & (TT4 > 2.8) ~ "High TT4",
+    
+    age >= 16 & age <= 17 & sex == "F" & TT4 >= 0.8 & TT4 <= 1.5 ~ "Normal TT4",
+    age >= 16 & age <= 17 & sex == "F" & (TT4 < 0.8) ~ "Low TT4",
+    age >= 16 & age <= 17 & sex == "F" & (TT4 > 1.5) ~ "High TT4",
+    
+    age >= 18 & TT4 >= 0.9 & TT4 <= 1.7 ~ "Normal TT4",
+    age >= 18 & (TT4 < 0.9) ~ "Low TT4",
+    age >= 18 & (TT4 > 1.7) ~ "High TT4",
+    
+    TRUE ~ "Invalid Age or Sex Range" 
+  ))
+
+thyroid_df
+```
+```{r}
+thyroid_df <- thyroid_df |> 
+  mutate(FTI_status = case_when(
+    is.na(FTI) ~ "No labs available",
+    
+    age <= 5 & FTI >= 0.8 & FTI <= 2.8 ~ "Normal FTI",
+    age <= 5 & (FTI < 0.8) ~ "Low FTI",
+    age <= 5 & (FTI > 2.8) ~ "High FTI",
+    
+    age >= 6 & age <= 15 & FTI >= 0.8 & FTI <= 2.1 ~ "Normal FTI",
+    age >= 6 & age <= 15 & (FTI < 0.8) ~ "Low FTI",
+    age >= 6 & age <= 15 & (FTI > 2.1) ~ "High FTI",
+    
+    age >= 16 & age <= 17 & sex == "M" & FTI >= 0.8 & FTI <= 2.8 ~ "Normal FTI",
+    age >= 16 & age <= 17 & sex == "M" & (FTI < 0.8) ~ "Low FTI",
+    age >= 16 & age <= 17 & sex == "M" & (FTI > 2.8) ~ "High FTI",
+    
+    age >= 16 & age <= 17 & sex == "F" & FTI >= 0.8 & FTI <= 1.5 ~ "Normal FTI",
+    age >= 16 & age <= 17 & sex == "F" & (FTI < 0.8) ~ "Low FTI",
+    age >= 16 & age <= 17 & sex == "F" & (FTI > 1.5) ~ "High FTI",
+    
+    age >= 18 & FTI >= 0.9 & FTI <= 1.7 ~ "Normal FTI",
+    age >= 18 & (FTI < 0.9) ~ "Low FTI",
+    age >= 18 & (FTI > 1.7) ~ "High FTI",
+    
+    TRUE ~ "Invalid Age or Sex Range" 
+  ))
+
+thyroid_df
+```
+```{r}
+thyroid_df <- thyroid_df[!apply(is.na(thyroid_df[, c("TSH", "T3", "TT4", "FTI")]), 1, all), ]
+thyroid_df
+```
+
+
+
+```{r}
+expected_condition <- function(TSH_status, TT4_status) {
+  if (TSH_status == "Normal TSH" & TT4_status == "Normal TT4") {
+    return("Normal Thyroid Function")
+  } else if (TSH_status == "Low TSH" & TT4_status == "High TT4") {
+    return("Hyperthyroidism Suspected")
+  } else if(TSH_status == "High TSH" & TT4_status =="Low TT4") {
+    return("Hypothyroidism Suspected")
+  } else if(TSH_status == "Low TSH" & TT4_status == "Low TT4") {
+    return("Hypothyroidism Secondary Suspected") 
+  } else {
+    return("unknown expected condition")
+  }
+}
+
+thyroid_df <- thyroid_df |> 
+  mutate(expected_condition = mapply(expected_condition, TSH_status, TT4_status))
+  
+thyroid_df
+```
+```{r}
+thyroid_df |> 
+  filter(Condition_Type == "hypothyroid")
+```
+
+```{r}
+thyroid_df$sex <- factor(thyroid_df$sex, levels = c("M", "F"))
+thyroid_df$pregnant <- factor(thyroid_df$pregnant, levels = c("TRUE", "FALSE"))
+
+#male = 0 female = 1
+thyroid_df$sex <- as.numeric(thyroid_df$sex) - 1
+#not pregnant = 0, pregnant = 1
+thyroid_df$pregnant <- as.numeric(thyroid_df$pregnant) - 1
+```
+
+```{r}
+thyroid_cleaned <- thyroid_df[complete.cases(thyroid_df[, c("TSH", "T3", "TT4", "FTI")]), ]
+thyroid_cleaned
+```
+
+```{r}
+table(thyroid_cleaned$Condition_Type)
+```
+
+```{r}
+thyroid_cleaned <- thyroid_cleaned |>
+  mutate(Hypothyroid = ifelse(`Condition_Type` == "hypothyroid", 1, 0))
+
+thyroid_cleaned<- thyroid_cleaned |> 
+  mutate(Hyperthyroid = ifelse(`Condition_Type` == "hyperthyroid", 1, 0))
+
+thyroid_cleaned
+```
+
+```{r}
+Hypothyroid <- "Hypothyroid" #1 for yes, 0 for no disorder
+
+hypo_log_model <- glm(Hypothyroid ~ sex + age + TSH + T3 + TT4 + FTI, data = thyroid_cleaned, family = "binomial")
+```
+
+```{r}
+summary(hypo_log_model)$coefficients
+exp(coef(hypo_log_model))
+```
+```{r}
+Hyperthyroid <- "Hyperthyroid" #1 for yes, 0 for no disorder
+
+hyper_log_model <- glm(Hyperthyroid ~ sex + age + TSH + T3 + TT4 + FTI, data = thyroid_cleaned, family = "binomial")
+```
+
+
+```{r}
+summary(hyper_log_model)$coefficients
+exp(coef(hyper_log_model))
+```
 
 
 
