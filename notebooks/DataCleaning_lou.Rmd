@@ -246,8 +246,12 @@ expected_condition <- function(TSH_status, TT4_status) {
 thyroid_df <- thyroid_df |> 
   mutate(expected_condition = mapply(expected_condition, TSH_status, TT4_status))
   
-thyroid_df
+thyroid_df <- thyroid_df[complete.cases(thyroid_df[, c("age", "sex", "pregnant", "TSH", "T3", "TT4", "FTI")]), ]
+
+saveRDS(thyroid_df, "thyroid_df_shiny.rds")
 ```
+
+
 ```{r}
 thyroid_df |> 
   filter(Condition_Type == "hypothyroid")
