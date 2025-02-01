@@ -4,11 +4,17 @@ function(input, output, session) {
     
     data <- thyroid_df_shiny[!is.na(thyroid_df_shiny$TSH) & !is.na(thyroid_df_shiny$age), ]
     
+
+    data <- thyroid_df_shiny[!is.na(thyroid_df_shiny$TSH) & !is.na(thyroid_df_shiny$age), ]
+    
+    # age groups being made 
+
     data$age_group <- cut(data$age,
                           breaks = c(-Inf, 1, 6, 11, 20, 99),
                           labels = c("Babies < 1", "Children 1-6", "Children 7-11", "Ages 12-20", "Adults 21-99"),
                           right = TRUE)
     
+
     data <- data[abs(data$TSH - input$tsh_value) <= 1, ]
     
     if (input$sex != "All") {
@@ -16,6 +22,10 @@ function(input, output, session) {
     }
     
     return(data)
+
+    # Filter TSH values
+    data[abs(data$TSH - input$tsh_value) <= 1, ]
+
   })
   
   output$histogram <- renderPlot({
