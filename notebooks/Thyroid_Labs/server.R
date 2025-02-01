@@ -1,16 +1,15 @@
 function(input, output, session) {
   
   filtered_data <- reactive({
-    # Filter out rows where TSH or age is NA
     data <- thyroid_df_shiny[!is.na(thyroid_df_shiny$TSH) & !is.na(thyroid_df_shiny$age), ]
     
-    # Create age groups based on the filtered data
+    # age groups being made 
     data$age_group <- cut(data$age,
                           breaks = c(-Inf, 1, 6, 11, 20, 99),
                           labels = c("Babies < 1", "Children 1-6", "Children 7-11", "Ages 12-20", "Adults 21-99"),
                           right = TRUE)
     
-    # Filter the data based on the TSH value input
+    # Filter TSH values
     data[abs(data$TSH - input$tsh_value) <= 1, ]
   })
   
