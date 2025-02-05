@@ -3,48 +3,45 @@ ui <- fluidPage(
   
   sidebarLayout(
     sidebarPanel(
-      # TSH
-      sliderInput("tsh_value", 
-                  "Input TSH Value (in mU/L):",
-                  min = 0, 
-                  max = 530,
-                  value = 2,
-                  step = 0.25),
+      h3("Distribution of TSH Levels"),
+      numericInput("tsh_value", 
+                   "Input TSH Value (in mU/L):", 
+                   value = 2, 
+                   min = 0, 
+                   max = 530, 
+                   step = 0.25),
       p("Use the slider to view TSH values."),
-      br(),
       
       radioButtons("sex", 
-                   "Select Sex:",
+                   "Select Sex for Distribution:",
                    choices = c("All", "M", "F"), 
                    selected = "All"),
-      p("Use the buttons to select a sex."),
+      p("Use the buttons to filter by sex in the distribution."),
       
-      tabsetPanel(
-        tabPanel("Comparison",
-                 numericInput("user_age", "Enter your age:", value = 30, min = 0, max = 120),
-                 numericInput("user_tsh", "Enter your TSH value:", value = 2, min = 0, max = 530),
-                 actionButton("compare_button", "Compare to others"),
-                 br(),
-
-                 selectInput("age_range", "Select an Age Range:",
-                             choices = c("All", "Babies < 1", "Children 1-6", "Children 7-11", 
-                                         "Ages 12-20", "Adults 21-99"), 
-                             selected = "All"),
-                 textOutput("comparison_message")
-        ),
-        tabPanel("Distribution",
-                 textOutput("no_labs_available_message"),
-                 plotOutput("TSHhistogram")
-        )
-      )
+      br(),
+      
+      h3("Compare Your TSH Level to the Expected Range"),
+      numericInput("user_age", "Enter your age:", value = 30, min = 0, max = 120),
+      numericInput("user_tsh", "Enter your TSH value:", value = 2, min = 0, max = 530),
+      selectInput("comparison_age_range", 
+                  "Select an Age Range for Comparison:",
+                  choices = c("Babies < 1", "Children 1-6", "Children 7-11", 
+                              "Ages 12-20", "Adults 21-99")),
+      actionButton("compare_button", "Compare to Others"),
+      br()
     ),
     
     mainPanel(
+      textOutput("no_labs_available_message"),
       plotOutput("TSHhistogram"),
-      textOutput("comparison_message")
+      textOutput("comparison_message")  
     )
   )
 )
+
+
+
+
 
 
 

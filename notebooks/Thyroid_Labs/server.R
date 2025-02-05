@@ -1,11 +1,36 @@
 server <- function(input, output, session) {
   
-  # Initialize reactive value to track button state
+  reactive_age_range <- reactive({
+    age <- input$user_age
+    
+    if (age < 1) {
+      return("Babies < 1")
+    } else if (age >= 1 && age <= 6) {
+      return("Children 1-6")
+    } else if (age >= 7 && age <= 11) {
+      return("Children 7-11")
+    } else if (age >= 12 && age <= 20) {
+      return("Ages 12-20")
+    } else if (age >= 21 && age <= 99) {
+      return("Adults 21-99")
+    } else {
+      return("Adults 21-99")
+    }
+  })
+  
+  observe({
+    selected_range <- reactive_age_range()
+    
+    updateSelectInput(session, "comparison_age_range", selected = selected_range)
+  })
+  
+  
   compare_clicked <- reactiveVal(FALSE)
   
-  # When the compare button is clicked, update the reactive value to TRUE
   observeEvent(input$compare_button, {
+    req(input$user_age, input$user_tsh)
     compare_clicked(TRUE)
+    print(paste("Button clicked. TSH value: ", input$user_tsh)) 
   })
   
   # Normal TSH range
@@ -17,7 +42,6 @@ server <- function(input, output, session) {
     "Adults 21-99" = c(min = 0.27, max = 4.2)
   )
   
-  # Filtered data based on user input
   filtered_data <- reactive({
     data <- thyroid_df_shiny[!is.na(thyroid_df_shiny$TSH) & !is.na(thyroid_df_shiny$age), ]
     
@@ -33,14 +57,10 @@ server <- function(input, output, session) {
       data <- data[data$sex == input$sex, ]
     }
     
-    if (input$age_range != "All") {
-      data <- data[data$age_group == input$age_range, ]
-    }
-    
     return(data)
   })
   
-  # TSH histogram + user compare
+  # TSH histogram 
   output$TSHhistogram <- renderPlot({
     data <- filtered_data()
     
@@ -48,17 +68,7 @@ server <- function(input, output, session) {
       return(NULL)
     }
     
-    # Inputted data by user for comparison
-    user_data <- data.frame(
-      age = input$user_age,
-      TSH = input$user_tsh,
-      sex = "User",
-      age_group = cut(input$user_age, breaks = c(-Inf, 1, 6, 11, 20, 99), 
-                      labels = c("Babies < 1", "Children 1-6", "Children 7-11", "Ages 12-20", "Adults 21-99")),
-      stringsAsFactors = FALSE
-    )
-    
-    # Plotting the histogram
+
     plot <- ggplot(data, aes(x = TSH, fill = sex)) +
       geom_histogram(binwidth = 1, color = "black", alpha = 0.7, position = "dodge") +
       facet_wrap(~ age_group, nrow = 1) +
@@ -77,13 +87,20 @@ server <- function(input, output, session) {
         panel.spacing = unit(2, "lines")
       )
     
-    # Add the red dashed line only if the button has been clicked (compare_clicked is TRUE)
     if (compare_clicked()) {
-      plot <- plot + geom_vline(data = user_data, aes(xintercept = TSH), color = "red", size = 1.5, linetype = "dashed")
+      plot <- plot + 
+        geom_vline(
+          data = data[data$age_group == reactive_age_range(), ],
+          aes(xintercept = input$user_tsh),
+          color = "red", 
+          linetype = "dashed", 
+          size = 1
+        )
     }
     
     return(plot)
   })
+  
   
   output$no_labs_available_message <- renderText({
     data <- filtered_data()
@@ -95,15 +112,13 @@ server <- function(input, output, session) {
     }
   })
   
-  # Comparison message when the button is clicked
   observeEvent(input$compare_button, {
-    data <- filtered_data()
+    req(input$user_age, input$user_tsh) 
     
-    normal_range <- normal_ranges[[input$age_range]]
+    normal_range <- normal_ranges[[input$comparison_age_range]]
     normal_min <- normal_range["min"]
     normal_max <- normal_range["max"]
     
-    # Normal range for TSH values
     normal_status <- "within range"
     if (input$user_tsh < normal_min) {
       normal_status <- "lower than expected"
@@ -112,15 +127,13 @@ server <- function(input, output, session) {
     }
     
     user_comparison_message <- paste("Your TSH value is ", input$user_tsh, ".\n",
-                                     "This is ", normal_status, " for your age group (", input$age_range, ").\n")
+                                     "This is ", normal_status, " for your age group (", input$comparison_age_range, ").\n")
     
     output$comparison_message <- renderText({
       user_comparison_message
     })
   })
 }
-
-
 
 
 
