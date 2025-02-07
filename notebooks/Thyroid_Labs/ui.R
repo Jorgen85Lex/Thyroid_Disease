@@ -24,8 +24,8 @@ ui <- fluidPage(
                  br(),
                  
                  h3("Compare Your TSH Level to others and see if it's within the Expected Range"),
-                 numericInput("user_age", "Enter your age:", value = 30, min = 0, max = 120),
-                 numericInput("user_tsh", "Enter your TSH value:", value = 2, min = 0, max = 530),
+                 numericInput("user_age", "Enter your age:", value = 30, min = 0, max = 120, step = 1),
+                 numericInput("user_tsh", "Enter your TSH value:", value = 2, min = 0, max = 530, step = 1),
                  selectInput("comparison_age_range", 
                              "Age Range for Comparison (TSH):",
                              choices = c("Babies < 1", "Children 1-6", "Children 7-11", 
@@ -86,6 +86,7 @@ ui <- fluidPage(
     )
   )
 )
+
 
 
 
