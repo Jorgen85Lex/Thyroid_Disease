@@ -30,6 +30,7 @@ server <- function(input, output, session) {
   observeEvent(input$compare_button, {
     req(input$user_age, input$user_tsh)
     compare_clicked(TRUE)
+    print(paste("Button clicked. TSH value: ", input$user_tsh)) 
   })
   
   # Normal TSH range
@@ -116,6 +117,10 @@ server <- function(input, output, session) {
     
     compare_clicked(TRUE)  
     
+    
+    invalidateLater(100, session)  
+    
+    
     print(paste("Button clicked. TSH value: ", input$user_tsh)) 
     
     normal_range <- normal_ranges[[input$comparison_age_range]]
@@ -142,7 +147,7 @@ server <- function(input, output, session) {
   reactive_age_range_t3 <- reactive({
     age_t3 <- input$user_age_t3
     
-    if (age_t3 < 1) {
+    if (age_t3 <= 1) {
       return("Babies < 1 year")
     } else if (age_t3 >= 1 && age_t3 <= 6) {
       return("Children 1 to 6 years")
@@ -167,6 +172,7 @@ server <- function(input, output, session) {
   observeEvent(input$compare_button_t3, {
     req(input$user_age_t3, input$user_t3)
     compare_clicked_t3(TRUE)
+    print(paste("Button clicked. Free T3 value: ", input$user_t3)) 
   })
   
   #normal Free T3 ranges
@@ -196,7 +202,7 @@ server <- function(input, output, session) {
     return(data_t3)
   })
   
-  #T3 histogram
+  
   output$T3histogram <- renderPlot({
     data_t3 <- filtered_data_t3() 
     
@@ -209,7 +215,7 @@ server <- function(input, output, session) {
       facet_wrap(~ age_group_t3, nrow = 1) +
       labs(title = paste("Histogram of T3 Levels Around", input$user_t3, "Across Different Age Ranges by Sex"),
            x = "T3 Level",
-           y = "Frequency") +
+           y = "Proportion") +
       scale_fill_manual(values = c("F" = "pink", "M" = "skyblue")) +
       theme_minimal() +
       theme(
@@ -252,6 +258,8 @@ server <- function(input, output, session) {
     compare_clicked_t3(TRUE) 
     
     
+    
+    
     print(paste("Button clicked. Free T3 value: ", input$user_t3)) 
     
     normal_range_t3 <- normal_ranges_t3[[input$comparison_age_range_t3]]
@@ -273,6 +281,9 @@ server <- function(input, output, session) {
     })
   })
 }
+    
+ 
+
 
 
 
