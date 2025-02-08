@@ -147,16 +147,16 @@ server <- function(input, output, session) {
   reactive_age_range_t3 <- reactive({
     age_t3 <- input$user_age_t3
     
-    if (age_t3 <= 1) {
-      return("Babies < 1 year")
+    if (age_t3 < 1) {
+      return("Babies < 1")
     } else if (age_t3 >= 1 && age_t3 <= 6) {
-      return("Children 1 to 6 years")
+      return("Children 1-6")
     } else if (age_t3 >= 7 && age_t3 <= 11) {
-      return("Children 7 to 11 years")
+      return("Children 7-11")
     } else if (age_t3 >= 12 && age_t3 <= 17) {
-      return("Children 12 to 17 years")
+      return("Ages 12-17")
     } else {
-      return("Adults 18 to 99 years")
+      return("Adults 18-99")
     }
   })
   
@@ -172,16 +172,15 @@ server <- function(input, output, session) {
   observeEvent(input$compare_button_t3, {
     req(input$user_age_t3, input$user_t3)
     compare_clicked_t3(TRUE)
-    print(paste("Button clicked. Free T3 value: ", input$user_t3)) 
   })
   
   #normal Free T3 ranges
   normal_ranges_t3 <- list(
-    "Babies < 1 year" = c(min = 1.4, max = 6.4),
-    "Children 1 to 6 years" = c(min = 2.0, max = 6.0),
-    "Children 7 to 11 years" = c(min = 2.7, max = 5.2),
-    "Children 12 to 17 years" = c(min = 2.3, max = 5.0),
-    "Adults 18 to 99 years" = c(min = 2.3, max = 4.1)
+    "Babies < 1" = c(min = 1.4, max = 6.4),
+    "Children 1-6" = c(min = 2.0, max = 6.0),
+    "Children 7-11" = c(min = 2.7, max = 5.2),
+    "Ages 12-17" = c(min = 2.3, max = 5.0),
+    "Adults 18-99" = c(min = 2.3, max = 4.1)
   )
   
   
@@ -231,7 +230,7 @@ server <- function(input, output, session) {
     if (compare_clicked_t3()) {
       plot_t3 <- plot_t3 + 
         geom_vline(
-          #data = data_t3[data_t3$age_group_t3 == reactive_age_range_t3(), ],
+          data = data_t3[data_t3$age_group_t3 == reactive_age_range_t3(), ],
           aes(xintercept = input$user_t3),
           color = "red", 
           linetype = "dashed", 
