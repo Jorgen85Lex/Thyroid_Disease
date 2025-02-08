@@ -70,7 +70,7 @@ server <- function(input, output, session) {
     
     
     plot <- ggplot(data, aes(x = TSH, fill = sex)) +
-      geom_histogram(binwidth = 1, color = "black", alpha = 0.7, position = "dodge") +
+      geom_histogram(aes(y= ..density..), binwidth = 1, color = "black", alpha = 0.7, position = "dodge") +
       facet_wrap(~ age_group, nrow = 1) +
       labs(title = paste("Histogram of TSH Levels Around", input$tsh_value, "Across Different Age Ranges by Sex"),
            x = "TSH Level",
@@ -147,7 +147,7 @@ server <- function(input, output, session) {
   reactive_age_range_t3 <- reactive({
     age_t3 <- input$user_age_t3
     
-    if (age_t3 <= 1) {
+    if (age_t3 < 1) {
       return("Babies < 1 year")
     } else if (age_t3 >= 1 && age_t3 <= 6) {
       return("Children 1 to 6 years")
@@ -199,13 +199,12 @@ server <- function(input, output, session) {
       data_t3 <- data_t3[data_t3$sex == input$sex_t3, ]
     }
     
-    # Debugging: Check the data that is being returned
-    print(head(data_t3))  # Print the first few rows of filtered data
+    print(head(data_t3))  
     
     return(data_t3)
   })
   
-  
+  #T3 histogram
   output$T3histogram <- renderPlot({
     data_t3 <- filtered_data_t3() 
     
@@ -214,7 +213,7 @@ server <- function(input, output, session) {
     }
     
     plot_t3 <- ggplot(data_t3, aes(x = T3, fill = sex)) +
-      geom_histogram(binwidth = 1, color = "black", alpha = 0.7, position = "dodge") +
+      geom_histogram(aes(y= ..density..), binwidth = 1, color = "black", alpha = 0.7, position = "dodge") +
       facet_wrap(~ age_group_t3, nrow = 1) +
       labs(title = paste("Histogram of T3 Levels Around", input$user_t3, "Across Different Age Ranges by Sex"),
            x = "T3 Level",
@@ -258,12 +257,11 @@ server <- function(input, output, session) {
   observeEvent(input$compare_button_t3, {
     req(input$user_age_t3, input$user_t3)
     
-    compare_clicked_t3(TRUE)  # Update reactive value to indicate comparison is clicked
+    compare_clicked_t3(TRUE) 
     
-    # Trigger UI updates explicitly if needed
-    invalidateLater(100, session)  # Re-trigger UI updates after 100 ms
+  
     
-    # Print log for debugging (optional)
+
     print(paste("Button clicked. Free T3 value: ", input$user_t3)) 
     
     # Update the message
