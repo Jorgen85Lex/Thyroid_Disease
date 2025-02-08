@@ -30,7 +30,6 @@ server <- function(input, output, session) {
   observeEvent(input$compare_button, {
     req(input$user_age, input$user_tsh)
     compare_clicked(TRUE)
-    print(paste("Button clicked. TSH value: ", input$user_tsh)) 
   })
   
   # Normal TSH range
@@ -74,7 +73,7 @@ server <- function(input, output, session) {
       facet_wrap(~ age_group, nrow = 1) +
       labs(title = paste("Histogram of TSH Levels Around", input$tsh_value, "Across Different Age Ranges by Sex"),
            x = "TSH Level",
-           y = "Frequency") +
+           y = "Proportion") +
       scale_fill_manual(values = c("F" = "pink", "M" = "skyblue")) +
       theme_minimal() +
       theme(
@@ -117,10 +116,6 @@ server <- function(input, output, session) {
     
     compare_clicked(TRUE)  
     
- 
-    invalidateLater(100, session)  
-    
-
     print(paste("Button clicked. TSH value: ", input$user_tsh)) 
     
     normal_range <- normal_ranges[[input$comparison_age_range]]
@@ -143,7 +138,7 @@ server <- function(input, output, session) {
   })
   
   
-
+  
   reactive_age_range_t3 <- reactive({
     age_t3 <- input$user_age_t3
     
@@ -172,7 +167,6 @@ server <- function(input, output, session) {
   observeEvent(input$compare_button_t3, {
     req(input$user_age_t3, input$user_t3)
     compare_clicked_t3(TRUE)
-    print(paste("Button clicked. Free T3 value: ", input$user_t3)) 
   })
   
   #normal Free T3 ranges
@@ -198,8 +192,6 @@ server <- function(input, output, session) {
     if (input$sex_t3 != "All") {
       data_t3 <- data_t3[data_t3$sex == input$sex_t3, ]
     }
-    
-    print(head(data_t3))  
     
     return(data_t3)
   })
@@ -233,7 +225,7 @@ server <- function(input, output, session) {
     if (compare_clicked_t3()) {
       plot_t3 <- plot_t3 + 
         geom_vline(
-          data = data_t3[data_t3$age_group_t3 == reactive_age_range_t3(), ],
+          #data = data_t3[data_t3$age_group_t3 == reactive_age_range_t3(), ],
           aes(xintercept = input$user_t3),
           color = "red", 
           linetype = "dashed", 
@@ -259,12 +251,9 @@ server <- function(input, output, session) {
     
     compare_clicked_t3(TRUE) 
     
-  
     
-
     print(paste("Button clicked. Free T3 value: ", input$user_t3)) 
     
-    # Update the message
     normal_range_t3 <- normal_ranges_t3[[input$comparison_age_range_t3]]
     normal_min_t3 <- normal_range_t3["min"]
     normal_max_t3 <- normal_range_t3["max"]
@@ -277,14 +266,13 @@ server <- function(input, output, session) {
     }
     
     user_comparison_message_t3 <- paste("Your Free T3 value is ", input$user_t3, ".\n",
-                                     "This is ", normal_status_t3, " for your age group (", input$comparison_age_range_t3, ").\n")
+                                        "This is ", normal_status_t3, " for your age group (", input$comparison_age_range_t3, ").\n")
     
     output$comparison_message_t3 <- renderText({
       user_comparison_message_t3
     })
   })
 }
-
 
 
 
