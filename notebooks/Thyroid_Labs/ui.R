@@ -68,11 +68,7 @@ ui <- fluidPage(
                  numericInput("user_t3", "Enter your T3 value:", value = 2.8, min = 0, max = 20, step = 0.1),
                  selectInput("comparison_age_range_t3", 
                              "Age Range for Comparison (T3):",
-                             choices = c("Babies < 1 year", 
-                                         "Children 1 to 6 years", 
-                                         "Children 7 to 11 years", 
-                                         "Children 12 to 17 years", 
-                                         "Adults 18 to 99 years")),
+                             choices = c("Babies < 1", "Children 1-6", "Children 7-11", "Ages 12-17", "Adults 18-99")),
                  actionButton("compare_button_t3", "Compare to Others"),
                  br()
                ),
@@ -81,6 +77,43 @@ ui <- fluidPage(
                  textOutput("no_labs_available_message_t3"),
                  plotOutput("T3histogram"),
                  textOutput("comparison_message_t3")  
+               )
+             )
+    ),
+    tabPanel("T4 Level Distribution", 
+             sidebarLayout(
+               sidebarPanel(
+                 h3("Distribution of Free T4 Levels"),
+                 numericInput("t4_value", 
+                              "Input Free T4 Value (in mcg/dL):", 
+                              value = 1.5, 
+                              min = 0, 
+                              max = 5, 
+                              step = 0.1),
+                 p("Input T4 value."),
+                 
+                 radioButtons("sex_t4", 
+                              "Select Sex for Distribution:",
+                              choices = c("All", "M", "F"), 
+                              selected = "All"),
+                 p("Use the buttons to filter by sex."),
+                 
+                 br(),
+                 
+                 h3("Compare Your T4 Level to others and see if it's within the Expected Range"),
+                 numericInput("user_age_t4", "Enter your age:", value = 30, min = 0, max = 120, step = 1),
+                 numericInput("user_t4", "Enter your T4 value:", value = 1.5, min = 0, max = 330, step = 1),
+                 selectInput("comparison_age_range_t4", 
+                             "Age Range for Comparison (T4):",
+                             choices = c("Children < 6", "Children 6-15", "Adolescents 16-17 M", "Adolescents 16-17 F", "Adults > 18")),
+                 actionButton("compare_button_t4", "Compare to Others"),
+                 br()
+               ),
+               
+               mainPanel(
+                 textOutput("no_labs_available_message_t4"),
+                 plotOutput("T4histogram"),
+                 textOutput("comparison_message_t4")  
                )
              )
     )

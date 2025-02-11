@@ -30,7 +30,6 @@ server <- function(input, output, session) {
   observeEvent(input$compare_button, {
     req(input$user_age, input$user_tsh)
     compare_clicked(TRUE)
-    print(paste("Button clicked. TSH value: ", input$user_tsh)) 
   })
   
   # Normal TSH range
@@ -94,7 +93,7 @@ server <- function(input, output, session) {
           aes(xintercept = input$user_tsh),
           color = "red", 
           linetype = "dashed", 
-          size = 1
+          linewidth = 1
         )
     }
     
@@ -234,7 +233,7 @@ server <- function(input, output, session) {
           aes(xintercept = input$user_t3),
           color = "red", 
           linetype = "dashed", 
-          size = 1
+          linewidth = 1
         )
     }
     
@@ -277,6 +276,144 @@ server <- function(input, output, session) {
     
     output$comparison_message_t3 <- renderText({
       user_comparison_message_t3
+    })
+  })
+  
+ 
+  
+   reactive_age_range_t4 <- reactive({
+    age_t4 <- input$user_age_t4
+    
+    if (age_t4 < 6) {
+      return("Children < 6")
+    } else if (age_t4 >= 6 && age_t4 <= 15) {
+      return("Children 6-15")
+    } else if (age_t4 >= 16 && age_t4 <= 17 && sex == 'M') {
+      return("Adolescents 16-17 M")
+    } else if (age_t4 >= 16 && age_t4 <= 17 && sex == 'F') {
+      return("Adolescents 16-17 F")
+    } else {
+      return("Adults > 18")
+    }
+  })
+  
+  observe({
+    selected_range_t4 <- reactive_age_range_t4()
+    
+    updateSelectInput(session, "comparison_age_range_t4", selected = selected_range_t4)
+  })
+  
+  
+  compare_clicked_t4 <- reactiveVal(FALSE)
+  
+  observeEvent(input$compare_button_t4, {
+    req(input$user_age_t4, input$user_t4)
+    compare_clicked_t4(TRUE)
+  })
+  
+  #normal Free T3 ranges
+  normal_ranges_t4 <- list(
+    "Children < 6" = c(min = 0.8, max = 2.8),
+    "Children 6-15" = c(min = 0.8, max = 2.1),
+    "Adolescents 16-17 M" = c(min = 0.8, max = 2.8),
+    "Adolescents 16-17 F" = c(min = 0.8, max = 1.5),
+    "Adults > 18" = c(min = 0.9, max = 1.7)
+  )
+  
+  
+  filtered_data_t4 <- reactive({
+    data_t4 <- thyroid_df_shiny[!is.na(thyroid_df_shiny$TT4) & !is.na(thyroid_df_shiny$age), ]
+    
+    data_t4$age_group_t4 <- cut(data_t4$age,
+                                breaks = c(-Inf, 6, 15, 17, 99),
+                                labels = c("Children < 6", "Children 6-15", "Adolescents 16-17", "Adults > 18"),
+                                right = TRUE)
+    
+    data_t4 <- data_t4[abs(data_t4$TT4 - input$t4_value) <= 1, ]
+    
+    if (input$sex_t4 != "All") {
+      data_t4 <- data_t4[data_t4$sex == input$sex_t4, ]
+    }
+    
+    return(data_t4)
+  })
+  
+  
+  output$T4histogram <- renderPlot({
+    data_t4 <- filtered_data_t4() 
+    
+    if (nrow(data_t4) == 0) {
+      return(NULL)
+    }
+    
+    plot_t4 <- ggplot(data_t4, aes(x = TT4, fill = sex)) +
+      geom_histogram(aes(y= ..density..), binwidth = 1, color = "black", alpha = 0.7, position = "dodge") +
+      facet_wrap(~ age_group_t4, nrow = 1) +
+      labs(title = paste("Histogram of T4 Levels Around", input$user_t4, "Across Different Age Ranges by Sex"),
+           x = "T4 Level",
+           y = "Proportion") +
+      scale_fill_manual(values = c("F" = "pink", "M" = "skyblue")) +
+      theme_minimal() +
+      theme(
+        plot.title = element_text(size = 20),
+        axis.title.y = element_text(size = 14),
+        axis.text.y = element_text(size = 12),
+        axis.text.x = element_text(size = 12),
+        plot.margin = margin(t = 30, b = 40),
+        strip.text = element_text(size = 12, margin = margin(t = 10, b = 10)),
+        panel.spacing = unit(2, "lines")
+      )
+    
+    if (compare_clicked_t4()) {
+      plot_t4 <- plot_t4 + 
+        geom_vline(
+          data = data_t4[data_t4$age_group_t4 == reactive_age_range_t4(), ],
+          aes(xintercept = input$user_t4),
+          color = "red", 
+          linetype = "dashed", 
+          linewidth = 1
+        )
+    }
+    
+    return(plot_t4)
+  })
+  
+  output$no_labs_available_message_t4 <- renderText({
+    data_t4 <- filtered_data_t4()
+    
+    if (nrow(data_t4) == 0) {
+      return("No results matching that input.")
+    } else {
+      return(NULL)
+    }
+  })
+  
+  observeEvent(input$compare_button_t4, {
+    req(input$user_age_t4, input$user_t4)
+    
+    compare_clicked_t4(TRUE) 
+    
+    
+    
+    
+    print(paste("Button clicked. T4 value: ", input$user_t4)) 
+    
+    normal_range_t4 <- normal_ranges_t4[[input$comparison_age_range_t4]]
+    normal_min_t4 <- normal_range_t4["min"]
+    normal_max_t4 <- normal_range_t4["max"]
+    
+    normal_status_t4 <- "within range"
+    if (input$user_t4 < normal_min_t4) {
+      normal_status_t4 <- "lower than expected"
+    } else if (input$user_t4 > normal_max_t4) {
+      normal_status_t4 <- "higher than expected"
+    }
+    
+    user_comparison_message_t4 <- paste("Your T4 value is ", input$user_t4, ".\n",
+                                        "This is ", normal_status_t4, " for your age group (", input$comparison_age_range_t4, ").\n")
+    
+    output$comparison_message_t4 <- renderText({
+      user_comparison_message_t4
     })
   })
 }
