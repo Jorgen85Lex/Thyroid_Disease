@@ -83,9 +83,9 @@ ui <- fluidPage(
     tabPanel("T4 Level Distribution", 
              sidebarLayout(
                sidebarPanel(
-                 h3("Distribution of Free T4 Levels"),
+                 h3("Distribution of T4 Levels"),
                  numericInput("t4_value", 
-                              "Input Free T4 Value (in mcg/dL):", 
+                              "Input  T4 Value (in ng/dL):", 
                               value = 1.5, 
                               min = 0, 
                               max = 335, 
