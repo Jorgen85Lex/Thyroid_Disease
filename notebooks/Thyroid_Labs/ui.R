@@ -25,7 +25,7 @@ ui <- fluidPage(
                  
                  h3("Compare Your TSH Level to others and see if it's within the Expected Range"),
                  numericInput("user_age", "Enter your age:", value = 30, min = 0, max = 120, step = 1),
-                 numericInput("user_tsh", "Enter your TSH value:", value = 2, min = 0, max = 530, step = 1),
+                 numericInput("user_tsh", "Enter your TSH value:", value = 2, min = 0, max = 530, step = 0.1),
                  selectInput("comparison_age_range", 
                              "Age Range for Comparison (TSH):",
                              choices = c("Babies < 1", "Children 1-6", "Children 7-11", 
@@ -88,7 +88,7 @@ ui <- fluidPage(
                               "Input Free T4 Value (in mcg/dL):", 
                               value = 1.5, 
                               min = 0, 
-                              max = 5, 
+                              max = 335, 
                               step = 0.1),
                  p("Input T4 value."),
                  
@@ -102,10 +102,10 @@ ui <- fluidPage(
                  
                  h3("Compare Your T4 Level to others and see if it's within the Expected Range"),
                  numericInput("user_age_t4", "Enter your age:", value = 30, min = 0, max = 120, step = 1),
-                 numericInput("user_t4", "Enter your T4 value:", value = 1.5, min = 0, max = 330, step = 1),
+                 numericInput("user_t4", "Enter your T4 value:", value = 1.5, min = 0, max = 330, step = 0.1),
                  selectInput("comparison_age_range_t4", 
                              "Age Range for Comparison (T4):",
-                             choices = c("Children < 6", "Children 6-15", "Adolescents 16-17 M", "Adolescents 16-17 F", "Adults > 18")),
+                             choices = c("Children < 6", "Children 6-15", "Adolescents 16-17", "Adults 18-99")),
                  actionButton("compare_button_t4", "Compare to Others"),
                  br()
                ),

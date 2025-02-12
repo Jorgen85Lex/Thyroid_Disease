@@ -211,7 +211,7 @@ server <- function(input, output, session) {
     plot_t3 <- ggplot(data_t3, aes(x = T3, fill = sex)) +
       geom_histogram(aes(y= ..density..), binwidth = 1, color = "black", alpha = 0.7, position = "dodge") +
       facet_wrap(~ age_group_t3, nrow = 1) +
-      labs(title = paste("Histogram of T3 Levels Around", input$user_t3, "Across Different Age Ranges by Sex"),
+      labs(title = paste("Histogram of T3 Levels Around", input$t3_value, "Across Different Age Ranges by Sex"),
            x = "T3 Level",
            y = "Proportion") +
       scale_fill_manual(values = c("F" = "pink", "M" = "skyblue")) +
@@ -288,12 +288,10 @@ server <- function(input, output, session) {
       return("Children < 6")
     } else if (age_t4 >= 6 && age_t4 <= 15) {
       return("Children 6-15")
-    } else if (age_t4 >= 16 && age_t4 <= 17 && sex == 'M') {
-      return("Adolescents 16-17 M")
-    } else if (age_t4 >= 16 && age_t4 <= 17 && sex == 'F') {
-      return("Adolescents 16-17 F")
+    } else if (age_t4 >= 16 && age_t4 <= 17) {
+      return("Adolescents 16-17")
     } else {
-      return("Adults > 18")
+      return("Adults 18-99")
     }
   })
   
@@ -311,13 +309,12 @@ server <- function(input, output, session) {
     compare_clicked_t4(TRUE)
   })
   
-  #normal Free T3 ranges
+  #normal T4 ranges
   normal_ranges_t4 <- list(
     "Children < 6" = c(min = 0.8, max = 2.8),
     "Children 6-15" = c(min = 0.8, max = 2.1),
-    "Adolescents 16-17 M" = c(min = 0.8, max = 2.8),
-    "Adolescents 16-17 F" = c(min = 0.8, max = 1.5),
-    "Adults > 18" = c(min = 0.9, max = 1.7)
+    "Adolescents 16-17" = c(min = 0.8, max = 2.8),
+    "Adults 18-99" = c(min = 0.9, max = 1.7)
   )
   
   
@@ -326,7 +323,7 @@ server <- function(input, output, session) {
     
     data_t4$age_group_t4 <- cut(data_t4$age,
                                 breaks = c(-Inf, 6, 15, 17, 99),
-                                labels = c("Children < 6", "Children 6-15", "Adolescents 16-17", "Adults > 18"),
+                                labels = c("Children < 6", "Children 6-15", "Adolescents 16-17", "Adults 18-99"),
                                 right = TRUE)
     
     data_t4 <- data_t4[abs(data_t4$TT4 - input$t4_value) <= 1, ]
@@ -338,7 +335,7 @@ server <- function(input, output, session) {
     return(data_t4)
   })
   
-  
+  #T4 histo
   output$T4histogram <- renderPlot({
     data_t4 <- filtered_data_t4() 
     
@@ -349,7 +346,7 @@ server <- function(input, output, session) {
     plot_t4 <- ggplot(data_t4, aes(x = TT4, fill = sex)) +
       geom_histogram(aes(y= ..density..), binwidth = 1, color = "black", alpha = 0.7, position = "dodge") +
       facet_wrap(~ age_group_t4, nrow = 1) +
-      labs(title = paste("Histogram of T4 Levels Around", input$user_t4, "Across Different Age Ranges by Sex"),
+      labs(title = paste("Histogram of T4 Levels Around", input$t4_value, "Across Different Age Ranges by Sex"),
            x = "T4 Level",
            y = "Proportion") +
       scale_fill_manual(values = c("F" = "pink", "M" = "skyblue")) +
