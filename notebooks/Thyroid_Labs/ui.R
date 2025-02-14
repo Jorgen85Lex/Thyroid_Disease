@@ -1,5 +1,5 @@
 ui <- fluidPage(
-  titlePanel("TSH and Free T3 Level Distribution by Age and Sex"),
+  titlePanel("TSH, Free T3 & Total T4 Level Distributions by Age and Sex"),
   
   tabsetPanel(
     # Tab for TSH
@@ -8,7 +8,7 @@ ui <- fluidPage(
                sidebarPanel(
                  h3("Distribution of TSH Levels"),
                  numericInput("tsh_value", 
-                              "Input TSH Value (in mU/L):", 
+                              "Input TSH Value (in uIU/mL):", 
                               value = 2, 
                               min = 0, 
                               max = 530, 
@@ -80,10 +80,10 @@ ui <- fluidPage(
                )
              )
     ),
-    tabPanel("T4 Level Distribution", 
+    tabPanel("Total T4 Level Distribution", 
              sidebarLayout(
                sidebarPanel(
-                 h3("Distribution of T4 Levels"),
+                 h3("Distribution of Total T4 Levels"),
                  numericInput("t4_value", 
                               "Input  T4 Value (in ng/dL):", 
                               value = 1.5, 

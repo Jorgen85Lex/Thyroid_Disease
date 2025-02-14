@@ -70,7 +70,7 @@ server <- function(input, output, session) {
     
     plot <- ggplot(data, aes(x = TSH, fill = sex)) +
       geom_histogram(aes(y= ..density..), binwidth = 1, color = "black", alpha = 0.7, position = "dodge") +
-      facet_wrap(~ age_group, nrow = 1) +
+      facet_wrap(~sex + age_group, nrow = 2) +
       labs(title = paste("Histogram of TSH Levels Around", input$tsh_value, "Across Different Age Ranges by Sex"),
            x = "TSH Level",
            y = "Proportion") +
@@ -137,7 +137,7 @@ server <- function(input, output, session) {
                                      "This is ", normal_status, " for your age group (", input$comparison_age_range, ").\n")
     
     output$comparison_message <- renderText({
-      user_comparison_message
+      (user_comparison_message)
     })
   })
   
@@ -210,7 +210,7 @@ server <- function(input, output, session) {
     
     plot_t3 <- ggplot(data_t3, aes(x = T3, fill = sex)) +
       geom_histogram(aes(y= ..density..), binwidth = 1, color = "black", alpha = 0.7, position = "dodge") +
-      facet_wrap(~ age_group_t3, nrow = 1) +
+      facet_wrap(~sex + age_group_t3, nrow = 2) +
       labs(title = paste("Histogram of T3 Levels Around", input$t3_value, "Across Different Age Ranges by Sex"),
            x = "T3 Level",
            y = "Proportion") +
@@ -345,7 +345,7 @@ server <- function(input, output, session) {
     
     plot_t4 <- ggplot(data_t4, aes(x = TT4, fill = sex)) +
       geom_histogram(aes(y= ..density..), binwidth = 1, color = "black", alpha = 0.7, position = "dodge") +
-      facet_wrap(~ age_group_t4, nrow = 1) +
+      facet_wrap(~sex + age_group_t4, nrow = 2) +
       labs(title = paste("Histogram of T4 Levels Around", input$t4_value, "Across Different Age Ranges by Sex"),
            x = "T4 Level",
            y = "Proportion") +
