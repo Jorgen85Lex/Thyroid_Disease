@@ -1,5 +1,5 @@
 ui <- fluidPage(
-  titlePanel("TSH, Free T3 & Total T4 Level Distributions by Age and Sex"),
+  titlePanel("Exploring Thyroid Health Through Blood Work"),
   
   tabsetPanel(
     # Tab for TSH
@@ -118,7 +118,7 @@ ui <- fluidPage(
              )
     ),
       tabPanel("Diagnosis", 
-               h3("Suspected Diagnosis Based on Thyroid Hormone Levels"),
+               h2("Suspected Diagnosis Based on Thyroid Hormone Levels"),
                uiOutput("diagnosis_output")
       )
     )

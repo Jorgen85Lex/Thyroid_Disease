@@ -417,7 +417,7 @@ server <- function(input, output, session) {
   })
   
   diagnosis_check <- reactive({
-    req(input$user_tsh, input$user_t3, input$user_t4, input$user_age, input$sex)
+    req(input$user_tsh, input$user_t3, input$user_t4, input$user_age)
     
 
     normal_range_tsh <- normal_ranges[[reactive_age_range()]]
@@ -442,11 +442,11 @@ server <- function(input, output, session) {
     }
     
     if (input$user_tsh < normal_min_tsh && input$user_t3 > normal_max_t3 && input$user_t4 > normal_max_t4) {
-      diagnosis <- "Suspected Hyperthyroidism"
+      diagnosis <- "Suspected Hyperthyroidism."
     }
     
     if (input$user_tsh > normal_max_tsh && input$user_t3 < normal_min_t3 && input$user_t4 < normal_min_t4) {
-      diagnosis <- "Suspected Hypothyroidism"
+      diagnosis <- "Suspected Hypothyroidism."
     }
     
     return(diagnosis)
@@ -456,7 +456,7 @@ server <- function(input, output, session) {
   output$diagnosis_output <- renderUI({
     diagnosis <- diagnosis_check()
     
-    return(h4(paste("Diagnosis: ", diagnosis)))
+    return(HTML(paste("<h4>Diagnosis: <strong>", diagnosis, "</strong></h4>", "<i>Please consult your physician for a formal diagnosis!</i>")))
   })
   
 }
