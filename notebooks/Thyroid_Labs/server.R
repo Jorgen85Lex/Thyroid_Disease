@@ -134,7 +134,7 @@ server <- function(input, output, session) {
     }
     
     user_comparison_message <- paste("Your TSH value is ", input$user_tsh, ".\n",
-                                     "This is ", normal_status, " for your age group (", input$comparison_age_range, ").\n")
+                                     "This is <b>", normal_status, "</b> for your age group (", input$comparison_age_range, ").\n")
     
     output$comparison_message <- renderText({
       (user_comparison_message)
@@ -272,7 +272,7 @@ server <- function(input, output, session) {
     }
     
     user_comparison_message_t3 <- paste("Your Free T3 value is ", input$user_t3, ".\n",
-                                        "This is ", normal_status_t3, " for your age group (", input$comparison_age_range_t3, ").\n")
+                                        "This is <b>", normal_status_t3, "</b> for your age group (", input$comparison_age_range_t3, ").\n")
     
     output$comparison_message_t3 <- renderText({
       user_comparison_message_t3
@@ -407,7 +407,7 @@ server <- function(input, output, session) {
     }
     
     user_comparison_message_t4 <- paste("Your T4 value is ", input$user_t4, ".\n",
-                                        "This is ", normal_status_t4, " for your age group (", input$comparison_age_range_t4, ").\n")
+                                        "This is <b>", normal_status_t4, "</b> for your age group (", input$comparison_age_range_t4, ").\n")
     
     output$comparison_message_t4 <- renderText({
       user_comparison_message_t4

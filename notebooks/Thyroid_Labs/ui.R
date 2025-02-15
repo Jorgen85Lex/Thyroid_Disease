@@ -37,7 +37,7 @@ ui <- fluidPage(
                mainPanel(
                  textOutput("no_labs_available_message"),
                  plotOutput("TSHhistogram"),
-                 textOutput("comparison_message")  
+                 htmlOutput("comparison_message")  
                )
              )
     ),
@@ -76,7 +76,7 @@ ui <- fluidPage(
                mainPanel(
                  textOutput("no_labs_available_message_t3"),
                  plotOutput("T3histogram"),
-                 textOutput("comparison_message_t3")  
+                 htmlOutput("comparison_message_t3")  
                )
              )
     ),
@@ -113,7 +113,7 @@ ui <- fluidPage(
                mainPanel(
                  textOutput("no_labs_available_message_t4"),
                  plotOutput("T4histogram"),
-                 textOutput("comparison_message_t4")  
+                 htmlOutput("comparison_message_t4")  
                )
              )
     )
