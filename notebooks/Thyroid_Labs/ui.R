@@ -102,7 +102,7 @@ ui <- fluidPage(
                  
                  h3("Compare Your T4 Level to others and see if it's within the Expected Range"),
                  numericInput("user_age_t4", "Enter your age:", value = 30, min = 0, max = 120, step = 1),
-                 numericInput("user_t4", "Enter your T4 value:", value = 1.5, min = 0, max = 330, step = 0.1),
+                 numericInput("user_t4", "Enter your T4 value:", value = 1.55, min = 0, max = 330, step = 0.1),
                  selectInput("comparison_age_range_t4", 
                              "Age Range for Comparison (T4):",
                              choices = c("Children < 6", "Children 6-15", "Adolescents 16-17", "Adults 18-99")),
@@ -116,9 +116,15 @@ ui <- fluidPage(
                  htmlOutput("comparison_message_t4")  
                )
              )
+    ),
+      tabPanel("Diagnosis", 
+               h3("Suspected Diagnosis Based on Thyroid Hormone Levels"),
+               uiOutput("diagnosis_output")
+      )
     )
+    
   )
-)
+
 
 
 

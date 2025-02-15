@@ -355,10 +355,9 @@ server <- function(input, output, session) {
       theme_minimal() +
       theme(
         plot.title = element_text(size = 20),
-        axis.title.y = element_text(size = 16),
-        axis.title.x = element_text(size = 16),
-        axis.text.y = element_text(size = 14),
-        axis.text.x = element_text(size = 14),
+        axis.title.y = element_text(size = 14),
+        axis.text.y = element_text(size = 12),
+        axis.text.x = element_text(size = 12),
         plot.margin = margin(t = 30, b = 40),
         strip.text = element_text(size = 12, margin = margin(t = 10, b = 10)),
         panel.spacing = unit(2, "lines")
@@ -416,6 +415,50 @@ server <- function(input, output, session) {
       user_comparison_message_t4
     })
   })
+  
+  diagnosis_check <- reactive({
+    req(input$user_tsh, input$user_t3, input$user_t4, input$user_age, input$sex)
+    
+
+    normal_range_tsh <- normal_ranges[[reactive_age_range()]]
+    normal_range_t3 <- normal_ranges_t3[[reactive_age_range_t3()]]
+    normal_range_t4 <- normal_ranges_t4[[reactive_age_range_t4()]]
+    
+    normal_min_tsh <- normal_range_tsh["min"]
+    normal_max_tsh <- normal_range_tsh["max"]
+    
+    normal_min_t3 <- normal_range_t3["min"]
+    normal_max_t3 <- normal_range_t3["max"]
+    
+    normal_min_t4 <- normal_range_t4["min"]
+    normal_max_t4 <- normal_range_t4["max"]
+    
+    diagnosis <- "No diagnosis available, not enough information to conclude."
+    
+    if (input$user_tsh >= normal_min_tsh && input$user_tsh <= normal_max_tsh &&
+        input$user_t3 >= normal_min_t3 && input$user_t3 <= normal_max_t3 &&
+        input$user_t4 >= normal_min_t4 && input$user_t4 <= normal_max_t4) {
+      diagnosis <- "No thyroid issues suspected. All values are within range."
+    }
+    
+    if (input$user_tsh < normal_min_tsh && input$user_t3 > normal_max_t3 && input$user_t4 > normal_max_t4) {
+      diagnosis <- "Suspected Hyperthyroidism"
+    }
+    
+    if (input$user_tsh > normal_max_tsh && input$user_t3 < normal_min_t3 && input$user_t4 < normal_min_t4) {
+      diagnosis <- "Suspected Hypothyroidism"
+    }
+    
+    return(diagnosis)
+  })
+  
+  
+  output$diagnosis_output <- renderUI({
+    diagnosis <- diagnosis_check()
+    
+    return(h4(paste("Diagnosis: ", diagnosis)))
+  })
+  
 }
     
  
