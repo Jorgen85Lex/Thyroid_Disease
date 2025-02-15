@@ -78,9 +78,10 @@ server <- function(input, output, session) {
       theme_minimal() +
       theme(
         plot.title = element_text(size = 20),
-        axis.title.y = element_text(size = 14),
-        axis.text.y = element_text(size = 12),
-        axis.text.x = element_text(size = 12),
+        axis.title.y = element_text(size = 16),
+        axis.title.x = element_text(size = 16),
+        axis.text.y = element_text(size = 14),
+        axis.text.x = element_text(size = 14),
         plot.margin = margin(t = 30, b = 40),
         strip.text = element_text(size = 12, margin = margin(t = 10, b = 10)),
         panel.spacing = unit(2, "lines")
@@ -218,9 +219,10 @@ server <- function(input, output, session) {
       theme_minimal() +
       theme(
         plot.title = element_text(size = 20),
-        axis.title.y = element_text(size = 14),
-        axis.text.y = element_text(size = 12),
-        axis.text.x = element_text(size = 12),
+        axis.title.y = element_text(size = 16),
+        axis.title.x = element_text(size = 16),
+        axis.text.y = element_text(size = 14),
+        axis.text.x = element_text(size = 14),
         plot.margin = margin(t = 30, b = 40),
         strip.text = element_text(size = 12, margin = margin(t = 10, b = 10)),
         panel.spacing = unit(2, "lines")
@@ -353,9 +355,10 @@ server <- function(input, output, session) {
       theme_minimal() +
       theme(
         plot.title = element_text(size = 20),
-        axis.title.y = element_text(size = 14),
-        axis.text.y = element_text(size = 12),
-        axis.text.x = element_text(size = 12),
+        axis.title.y = element_text(size = 16),
+        axis.title.x = element_text(size = 16),
+        axis.text.y = element_text(size = 14),
+        axis.text.x = element_text(size = 14),
         plot.margin = margin(t = 30, b = 40),
         strip.text = element_text(size = 12, margin = margin(t = 10, b = 10)),
         panel.spacing = unit(2, "lines")
